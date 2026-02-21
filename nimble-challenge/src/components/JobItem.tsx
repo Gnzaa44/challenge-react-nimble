@@ -10,6 +10,7 @@ interface JobItemProps {
 const JobItem = ({ job, candidate }: JobItemProps) => {
   const [repoUrl, setRepoUrl] = useState("");
   const [loading, setLoading] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = async () => {
     if (!repoUrl) {
@@ -23,28 +24,36 @@ const JobItem = ({ job, candidate }: JobItemProps) => {
         uuid: candidate.uuid,
         jobId: job.id,
         candidateId: candidate.candidateId,
+        applicationId: candidate.applicationId,
         repoUrl,
       });
-      alert("Application sent successfully!");
+      setSubmitted(true);
     } catch (error) {
       alert((error as Error).message);
     } finally {
       setLoading(false);
     }
   };
-  return (
-    <div style={{ marginBottom: "1rem" }}>
+ return (
+    <div className="job-card">
       <h3>{job.title}</h3>
-      <input
-        type="text"
-        placeholder="Repository URL"
-        value={repoUrl}
-        onChange={(e) => setRepoUrl(e.target.value)}
-      />
-      <button onClick={handleSubmit} disabled={loading}>
-        {loading ? "Sending..." : "Submit"}
-      </button>
+
+      <div className="job-form">
+        <input
+          type="text"
+          placeholder="GitHub repository URL"
+          value={repoUrl}
+          onChange={(e) => setRepoUrl(e.target.value)}
+        />
+        <button onClick={handleSubmit} disabled={loading || submitted}>
+          {loading ? "Submitting..." : submitted ? "Submitted" : "Submit"}
+        </button>
+        {submitted && (
+          <span className="status success-inline">Application received</span>
+        )}
+      </div>
     </div>
   );
 }
+
 export default JobItem;

@@ -28,7 +28,21 @@ function App() {
   if (loading) return <Loading />;
   if (!candidate) return <p>Error</p>;
 
-  return <JobList candidate={candidate} />;
+  return (
+    <div className="app-container">
+      <div className="header">
+        <div className="header-left">
+          <img src="/nimblegravity_latam_logo.jpg" alt="Nimble Gravity" />
+          <small>Nimble Challenge · React</small>
+        </div>
+      </div>
+
+      <div className="welcome">Welcome, {candidate.firstName}!</div>
+      <h2 className="section-title">Available positions</h2>
+
+      <JobList candidate={candidate} />
+    </div>
+  );
 }
 
 export default App;

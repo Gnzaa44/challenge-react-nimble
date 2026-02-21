@@ -17,7 +17,7 @@ export const getAvailableJobs = async () => {
 }
 
 export const applyToJob = async (payload: 
-    { uuid: string; jobId: string; candidateId: string; repoUrl: string }) => {
+    { uuid: string; jobId: string; candidateId: string; applicationId: string; repoUrl: string }) => {
     const response = await fetch(`${BASE_URL}/api/candidate/apply-to-job`, {
         method: "POST",
         headers: {
@@ -26,8 +26,18 @@ export const applyToJob = async (payload:
         body: JSON.stringify(payload)
     });
     if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Error applying to job");
+        let errBody: any = null;
+        try {
+            errBody = await response.json();
+        } catch (e) {
+            try {
+                errBody = await response.text();
+            } catch (e2) {
+                errBody = null;
+            }
+        }
+        const message = errBody && typeof errBody === 'object' ? (errBody.message || JSON.stringify(errBody)) : (errBody || response.statusText);
+        throw new Error(message || `Error applying to job: ${response.status}`);
     }
     return response.json();
 }
