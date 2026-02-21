@@ -11,12 +11,14 @@ const JobItem = ({ job, candidate }: JobItemProps) => {
   const [repoUrl, setRepoUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async () => {
     if (!repoUrl) {
-      alert("Please enter the repository URL");
+      setError("Please enter the repository URL");
       return;
     }
+    setError(null);
 
     try {
       setLoading(true);
@@ -29,11 +31,12 @@ const JobItem = ({ job, candidate }: JobItemProps) => {
       });
       setSubmitted(true);
     } catch (error) {
-      alert((error as Error).message);
+      setError((error as Error).message);
     } finally {
       setLoading(false);
     }
   };
+
  return (
     <div className="job-card">
       <h3>{job.title}</h3>
@@ -48,6 +51,7 @@ const JobItem = ({ job, candidate }: JobItemProps) => {
         <button onClick={handleSubmit} disabled={loading || submitted}>
           {loading ? "Submitting..." : submitted ? "Submitted" : "Submit"}
         </button>
+        {error && <span className="status error-inline">{error}</span>}
         {submitted && (
           <span className="status success-inline">Application received</span>
         )}
